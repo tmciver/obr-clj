@@ -1,6 +1,5 @@
 (ns obr-clj.core
-  (:import [java.net URL]
-           [org.apache.felix.bundlerepository.impl DataModelHelperImpl]))
+  (:import [org.apache.felix.bundlerepository.impl DataModelHelperImpl]))
 
 (defmulti create-repo
   "Returns a Felix bundle-repository repository."
@@ -15,5 +14,5 @@
   (.repository (DataModelHelperImpl.) url))
 
 (defmethod create-repo :default
-  [uri]
-  (.repository (DataModelHelperImpl.) (URL. uri)))
+  [url]
+  (.repository (DataModelHelperImpl.) (java.net.URL. url)))
