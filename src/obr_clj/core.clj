@@ -1,18 +1,19 @@
 (ns obr-clj.core
-  (:require [clojure.reflect :as r])
-  (:import [org.apache.felix.bundlerepository.impl RepositoryImpl]))
+  (:import [java.net URL]
+           [org.apache.felix.bundlerepository.impl DataModelHelperImpl]))
 
-(defn create-repo
-  "Returns a Felix bundle-repository repository with the given URI."
+(defmulti create-repo
+  "Returns a Felix bundle-repository repository."
+  class)
+
+(defmethod create-repo java.io.InputStream
+  [is]
+  (.repository (DataModelHelperImpl.) is))
+
+(defmethod create-repo java.net.URL
+  [url]
+  (.repository (DataModelHelperImpl.) url))
+
+(defmethod create-repo :default
   [uri]
-  (let [repo (RepositoryImpl.)
-        methods (-> repo
-                    .getClass
-                    .getDeclaredMethods)
-        setURI (->> methods
-                    (filter #(= "setURI" (.getName %)))
-                    first)
-        setURI (doto setURI (.setAccessible true))
-        args (into-array [uri])]
-    (.invoke setURI repo args)
-    repo))
+  (.repository (DataModelHelperImpl.) (URL. uri)))
