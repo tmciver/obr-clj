@@ -1,5 +1,7 @@
 (ns obr-clj.core
-  (:import [org.apache.felix.bundlerepository.impl DataModelHelperImpl]))
+  (:import [org.apache.felix.bundlerepository Resource]
+           [org.apache.felix.bundlerepository.impl DataModelHelperImpl
+            ResourceImpl]))
 
 (defmulti create-repo
   "Returns a Felix bundle-repository repository."
@@ -13,6 +15,35 @@
   [url]
   (.repository (DataModelHelperImpl.) url))
 
-(defmethod create-repo :default
+(defmethod create-repo String
   [url]
   (.repository (DataModelHelperImpl.) (java.net.URL. url)))
+
+(defmulti create-resource
+  "Creates a Resource from the given input, either a java.net.URL or a URL as
+string."
+  class)
+
+(defmethod create-resource java.net.URL
+  [url]
+  (let [res (.createResource (DataModelHelperImpl.) url)
+        res (cast ResourceImpl res)
+        res-file (java.io.File. (.toURI url))]
+    (doto res
+      (.put Resource/SIZE (str (.length res-file)))
+      (.put Resource/URI (.toString url)))))
+
+(defmethod create-resource String
+  [url]
+  (create-resource (java.net.URL. url))
+  ;(.createResource (DataModelHelperImpl.) (java.net.URL. url))
+  )
+
+(defn update-repo
+  "Update the given Repository with the given Resource (created using the
+create-resource function)."
+  [repo resloc]
+  (let [res (create-resource resloc)]
+    (doto repo
+      (.addResource res)
+      (.setLastModified (System/currentTimeMillis)))))
