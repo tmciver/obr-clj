@@ -3,7 +3,7 @@
             [obr-clj.core :refer :all]
             [clojure.java.io :as io]))
 
-(deftest repository-test
+(deftest create-repo-test
   (testing "Testing create-repo from local file."
     (let [repo-file "test/resources/index.xml"
           in (io/input-stream repo-file)
@@ -19,7 +19,9 @@
       (is (= (.getName repo)
              "Untitled"))
       (is (= (.getURI repo)
-             (str repo-url))))))
+             (str repo-url)))
+      (is (= (count (.getResources repo))
+             5)))))
 
 (deftest resource-test
   (testing "Testing create-resource."
@@ -32,6 +34,20 @@
       (is (= (.getSize res)
           bundle-file-size))
       (is (.getSymbolicName res)
-          "com.example.test")
+          "org.foo.shape.triangle")
       (is (str (.getVersion res))
-          "1.0"))))
+          "4.0.0"))))
+
+(deftest add-resource-test
+  (testing "Test add resource."
+    (let [repo-url (io/resource "resources/index.xml")
+          repo (create-repo repo-url)
+          bundle-url (io/resource "resources/test-bundle.jar")
+          res (create-resource bundle-url)
+          res-sym-name (.getSymbolicName res)]
+      (add-resource repo res)
+      (is (= (count (.getResources repo))
+             6))
+      (is (= (count (filter #(= (.getSymbolicName %) res-sym-name)
+                            (.getResources repo)))
+             1)))))

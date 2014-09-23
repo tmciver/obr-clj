@@ -39,11 +39,9 @@ string."
   ;(.createResource (DataModelHelperImpl.) (java.net.URL. url))
   )
 
-(defn update-repo
-  "Update the given Repository with the given Resource (created using the
-create-resource function)."
-  [repo resloc]
-  (let [res (create-resource resloc)]
-    (doto repo
+(defn add-resource
+  "Update the given Repository with the given Resource."
+  [repo res]
+  (doto repo
       (.addResource res)
-      (.setLastModified (System/currentTimeMillis)))))
+      (.setLastModified (System/currentTimeMillis))))
