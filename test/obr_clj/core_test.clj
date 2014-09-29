@@ -51,3 +51,13 @@
       (is (= (count (filter #(= (.getSymbolicName %) res-sym-name)
                             (.getResources repo)))
              1)))))
+
+(deftest write-repo-test
+  (testing "Write repository to file."
+    ;; currently this test only reads and then writes an empty repository file
+    (let [repo-url (io/resource "resources/empty-index.xml")
+          repo (create-repo repo-url)
+          tmp-file (java.io.File/createTempFile "repo-" ".xml")]
+      (add-resource repo (create-resource (io/resource "resources/test-bundle.jar")))
+      (with-open [wrtr (io/writer tmp-file)]
+        (write-repo repo wrtr)))))

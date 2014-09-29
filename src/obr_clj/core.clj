@@ -45,3 +45,9 @@ string."
   (doto repo
       (.addResource res)
       (.setLastModified (System/currentTimeMillis))))
+
+(defn write-repo
+  ([repo]
+   (.writeRepository (DataModelHelperImpl.) repo))
+  ([repo wrtr]
+   (.writeRepository (DataModelHelperImpl.) repo wrtr)))
