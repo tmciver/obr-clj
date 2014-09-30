@@ -1,7 +1,8 @@
 (ns obr-clj.core
+  (:require [clojure.java.io :as io])
   (:import [org.apache.felix.bundlerepository Resource]
            [org.apache.felix.bundlerepository.impl DataModelHelperImpl
-            ResourceImpl]))
+            ResourceImpl RepositoryImpl]))
 
 (defmulti create-repo
   "Returns a Felix bundle-repository repository."
@@ -51,3 +52,15 @@ string."
    (.writeRepository (DataModelHelperImpl.) repo))
   ([repo wrtr]
    (.writeRepository (DataModelHelperImpl.) repo wrtr)))
+
+(defn index
+  "Creates an OBR index named \"repository.xml\" in the current directory from
+  the bundles in the given directory."
+  [dir]
+  (let [jar-urls (->> (file-seq (io/file dir))
+                      (filter #(.endsWith (str %) ".jar"))
+                      (map #(.toURL (.toURI %))))
+        resources (map create-resource jar-urls)
+        repo (reduce #(add-resource %1 %2) (RepositoryImpl.) resources)]
+    (with-open [wrtr (io/writer "repository.xml")]
+      (write-repo repo wrtr))))
