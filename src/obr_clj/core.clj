@@ -53,6 +53,14 @@ string."
   ([repo wrtr]
    (.writeRepository (DataModelHelperImpl.) repo wrtr)))
 
+(defn update-repo
+  "Updates the repository at the given URL (can be a string or URL) with the
+  resource at the given URL (can be a string or URL) and returns the updated
+  repo."
+  [repo-url resource-url]
+  (-> (create-repo repo-url)
+      (add-resource (create-resource resource-url))))
+
 (defn index
   "Creates an OBR index named \"repository.xml\" in the current directory from
   the bundles in the given directory."
