@@ -36,9 +36,7 @@ string."
 
 (defmethod create-resource String
   [url]
-  (create-resource (java.net.URL. url))
-  ;(.createResource (DataModelHelperImpl.) (java.net.URL. url))
-  )
+  (create-resource (java.net.URL. url)))
 
 (defn add-resource
   "Update the given Repository with the given Resource."
