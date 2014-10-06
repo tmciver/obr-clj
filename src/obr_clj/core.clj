@@ -1,6 +1,6 @@
 (ns obr-clj.core
   (:require [clojure.java.io :as io])
-  (:import [org.apache.felix.bundlerepository Resource]
+  (:import [org.apache.felix.bundlerepository Resource Property]
            [org.apache.felix.bundlerepository.impl DataModelHelperImpl
             ResourceImpl RepositoryImpl]))
 
@@ -37,6 +37,13 @@ string."
 (defmethod create-resource String
   [url]
   (create-resource (java.net.URL. url)))
+
+(defn set-resource-uri
+  "Sets the resources URI to the given URI and returns the resource."
+  [res uri]
+  (let [res (cast ResourceImpl res)]
+    (doto res
+      (.put (Resource/URI) uri (Property/URI)))))
 
 (defn add-resource
   "Update the given Repository with the given Resource."

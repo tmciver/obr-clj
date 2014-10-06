@@ -36,7 +36,11 @@
       (is (.getSymbolicName res)
           "org.foo.shape.triangle")
       (is (str (.getVersion res))
-          "4.0.0"))))
+          "4.0.0")
+      ;; test setting of URI
+      (let [uri "http://example.com/path/to/my-bundle.jar"
+            res (set-resource-uri res uri)]
+        (is (= (.getURI res) uri))))))
 
 (deftest add-resource-test
   (testing "Test add resource."
