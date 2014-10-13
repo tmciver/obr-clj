@@ -1,4 +1,4 @@
-(defproject obr-clj "0.1.0-SNAPSHOT"
+(defproject obr-clj "0.1.0"
   :description "A Clojure wrapper for the Felix bundle repository library."
   :url "https://github.com/tmciver/obr-clj"
   :license {:name "Eclipse Public License"
